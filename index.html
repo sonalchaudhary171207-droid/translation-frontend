@@ -1,115 +1,616 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Summarizer | Chalk & Verse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #090a10;
+      --card-bg: rgba(18, 20, 29, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --pink: #ec4899;
+      --pink-glow: rgba(236, 72, 153, 0.25);
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      max-width: 720px;
-      margin: 40px auto;
-      color: #222;
-      line-height: 1.6;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      padding: 3rem 1rem;
+      display: flex;
+      justify-content: center;
     }
-    h2 {
-      color: #4b2e83;
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
-    #result h3 {
-      font-size: 20px;
-      font-weight: 700;
-      border-bottom: 2px solid #4b2e83;
-      padding-bottom: 6px;
-      margin-top: 28px;
+
+    /* Header */
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
     }
-    #result ul {
-      padding-left: 22px;
-    }
-    #result li {
-      margin-bottom: 8px;
-    }
-    input[type="text"], input[type="file"] {
-      padding: 6px;
-      margin: 8px 0;
-    }
-    button {
-      background: #4b2e83;
-      color: white;
-      border: none;
-      padding: 10px 16px;
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
       border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-left { flex: 1; }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--cyan);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+
+    /* Cards */
+    .aurora-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .aurora-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--pink), var(--cyan), transparent);
+      opacity: 0.7;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    /* Drop Zone */
+    .dropzone {
+      border: 1.5px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
       cursor: pointer;
-      font-size: 15px;
+      background: rgba(255, 255, 255, 0.01);
+      transition: all 0.2s ease;
+      margin-bottom: 1.25rem;
     }
-    button:hover {
-      background: #3a2266;
+
+    .dropzone:hover {
+      border-color: var(--pink);
+      background: rgba(236, 72, 153, 0.02);
     }
-    #speakBtn {
-      background: #2e8354;
+
+    .drop-icon { font-size: 1.25rem; margin-bottom: 0.4rem; }
+    .drop-text { font-size: 0.9rem; font-weight: 600; }
+    .drop-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+    /* Languages Row & Select Box */
+    .lang-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1.5rem;
     }
-    #speakBtn:hover {
-      background: #226640;
+
+    .lang-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .lang-pill:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--text);
+    }
+
+    .lang-pill.active {
+      background: var(--pink);
+      border-color: var(--pink);
+      color: white;
+      box-shadow: 0 0 12px var(--pink-glow);
+    }
+
+    .lang-select {
+      background: rgba(18, 20, 29, 0.9);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .lang-select:focus, .lang-select.active {
+      border-color: var(--pink);
+      box-shadow: 0 0 12px var(--pink-glow);
+    }
+
+    .lang-select option {
+      background: #12141d;
+      color: var(--text);
+    }
+
+    /* Buttons */
+    .action-row { display: flex; gap: 0.75rem; }
+
+    .btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-pink {
+      background: linear-gradient(135deg, #ec4899, #d946ef);
+      color: white;
+      box-shadow: 0 4px 15px var(--pink-glow);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-dark {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+    }
+
+    .btn-dark:hover { background: rgba(255, 255, 255, 0.1); }
+
+    /* Results */
+    #results {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .overview-p { color: #cbd5e1; font-size: 0.88rem; line-height: 1.6; }
+
+    /* Key Points Rows */
+    .points-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .point-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .point-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    /* Key Terms Blocks */
+    .terms-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .term-row {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .term-pill {
+      background: rgba(236, 72, 153, 0.15);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      color: var(--pink);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      min-width: 90px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    .term-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* Loader */
+    #loading {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-text {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <h2>📚 Study Summarizer</h2>
-  <form id="uploadForm">
-    <input type="file" name="file" required><br>
-    <input type="text" name="language" value="Hindi"><br><br>
-    <button type="submit">Summarize</button>
-  </form>
 
-  <button id="speakBtn" style="display:none; margin-top:15px;">🔊 Listen to Summary</button>
+  <div class="container">
 
-  <div id="result"></div>
+    <!-- Header Branding -->
+    <div class="app-brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-title">Study Summarizer</div>
+      <div class="brand-sub">reading, condensed</div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-left">
+        <div class="tag-badge">• works with PDFs & audio</div>
+        <h1 class="hero-title">Turn any chapter into<br><span>notes that stick.</span></h1>
+        <p class="hero-desc">
+          Drop in your material and get the overview, key points, and vocabulary — in whichever language actually makes it click.
+        </p>
+      </div>
+    </div>
+
+    <!-- Upload Input Card -->
+    <div class="aurora-card">
+      <form id="summarizer-form">
+        <span class="section-label">SOURCE MATERIAL</span>
+        
+        <div class="dropzone" onclick="document.getElementById('file-input').click()">
+          <div class="drop-icon">📤</div>
+          <div class="drop-text" id="file-name-text">Drop a file, or click to browse</div>
+          <div class="drop-sub">PDF, DOCX, or audio — up to 20MB</div>
+          <input type="file" id="file-input" style="display:none" onchange="updateFileLabel(this)" required>
+        </div>
+
+        <span class="section-label">EXPLAIN IT IN</span>
+        <div class="lang-row">
+          <!-- Quick Pills -->
+          <button type="button" class="lang-pill active" onclick="setLanguage('English', this)">English</button>
+          <button type="button" class="lang-pill" onclick="setLanguage('Hindi', this)">हिंदी</button>
+          <button type="button" class="lang-pill" onclick="setLanguage('Marathi', this)">मराठी</button>
+          <button type="button" class="lang-pill" onclick="setLanguage('Tamil', this)">தமிழ்</button>
+          <button type="button" class="lang-pill" onclick="setLanguage('Spanish', this)">Español</button>
+          
+          <!-- Dropdown for All Languages -->
+          <select class="lang-select" id="lang-dropdown" onchange="selectDropdownLanguage(this.value)">
+            <option value="" disabled selected>🌐 More Languages...</option>
+            <optgroup label="Indian Languages">
+              <option value="Bengali">বাংলা (Bengali)</option>
+              <option value="Gujarati">ગુજરાતી (Gujarati)</option>
+              <option value="Kannada">ಕನ್ನಡ (Kannada)</option>
+              <option value="Malayalam">മലയാളം (Malayalam)</option>
+              <option value="Punjabi">ਪੰਜਾਬੀ (Punjabi)</option>
+              <option value="Telugu">తెలుగు (Telugu)</option>
+              <option value="Urdu">اردو (Urdu)</option>
+            </optgroup>
+            <optgroup label="Global Languages">
+              <option value="Arabic">العربية (Arabic)</option>
+              <option value="Chinese">中文 (Chinese)</option>
+
+              <option value="French">Français (French)</option>
+              <option value="German">Deutsch (German)</option>
+              <option value="Italian">Italiano (Italian)</option>
+              <option value="Japanese">日本語 (Japanese)</option>
+              <option value="Korean">한국어 (Korean)</option>
+              <option value="Portuguese">Português (Portuguese)</option>
+              <option value="Russian">Русский (Russian)</option>
+
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="action-row">
+          <button type="submit" class="btn btn-pink" id="submit-btn">✦ Summarize now</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading">
+      ⏳ Processing document and generating notes...
+    </div>
+
+    <!-- Results Container -->
+    <div id="results">
+      <!-- Listen Control -->
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-dark" onclick="playAudioSummary()">🔊 Listen to summary</button>
+      </div>
+
+      <!-- Overview Card -->
+      <div class="aurora-card">
+        <div class="card-title">
+          <span>≡</span> <span id="heading-overview">Overview</span>
+        </div>
+        <p class="overview-p" id="content-overview"></p>
+      </div>
+
+      <!-- Key Points Card -->
+      <div class="aurora-card">
+        <div class="card-title">
+          <span>🎯</span> <span id="heading-keypoints">Key points</span>
+        </div>
+        <div class="points-list" id="content-keypoints"></div>
+      </div>
+
+      <!-- Key Terms Card -->
+      <div class="aurora-card">
+        <div class="card-title">
+          <span>📖</span> <span id="heading-keyterms">Key terms</span>
+        </div>
+        <div class="terms-list" id="content-keyterms"></div>
+      </div>
+    </div>
+
+    <div class="footer-text">made for late-night study sessions</div>
+
+  </div>
 
   <script>
-    let currentSummaryText = "";
+    const BACKEND_URL = "http://127.0.0.1:5000/process"; 
 
-    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+    let selectedLanguage = "English";
+    let currentData = null;
+
+    // TTS Code mappings for speech synthesis
+    const langVoiceMap = {
+      'English': 'en-US',
+      'Hindi': 'hi-IN',
+      'Marathi': 'mr-IN',
+      'Tamil': 'ta-IN',
+      'Spanish': 'es-ES',
+      'Bengali': 'bn-IN',
+      'Gujarati': 'gu-IN',
+      'Kannada': 'kn-IN',
+      'Malayalam': 'ml-IN',
+      'Punjabi': 'pa-IN',
+      'Telugu': 'te-IN',
+      'Urdu': 'ur-PK',
+      'Arabic': 'ar-SA',
+      'Chinese': 'zh-CN',
+      'French': 'fr-FR',
+      'German': 'de-DE',
+      'Italian': 'it-IT',
+      'Japanese': 'ja-JP',
+      'Korean': 'ko-KR',
+      'Portuguese': 'pt-PT',
+      'Russian': 'ru-RU'
+    };
+
+    function setLanguage(lang, element) {
+      selectedLanguage = lang;
+      document.querySelectorAll('.lang-pill').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('lang-dropdown').classList.remove('active');
+      document.getElementById('lang-dropdown').selectedIndex = 0;
+      element.classList.add('active');
+    }
+
+    function selectDropdownLanguage(lang) {
+      if (!lang) return;
+      selectedLanguage = lang;
+      document.querySelectorAll('.lang-pill').forEach(btn => btn.classList.remove('active'));
+      const dropdown = document.getElementById('lang-dropdown');
+      dropdown.classList.add('active');
+    }
+
+    function updateFileLabel(input) {
+      const label = document.getElementById('file-name-text');
+      if (input.files.length > 0) {
+        label.textContent = "Selected: " + input.files[0].name;
+      }
+    }
+
+    document.getElementById('summarizer-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      document.getElementById("result").innerHTML = "Loading...";
-      document.getElementById("speakBtn").style.display = "none";
 
-      const res = await fetch("https://translation-backend-yedv.onrender.com/process", {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
+      const fileInput = document.getElementById('file-input');
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+      const submitBtn = document.getElementById('submit-btn');
 
-      if (data.error) {
-        document.getElementById("result").innerHTML = "Error: " + data.error;
+      if (!fileInput.files.length) {
+        alert("Please select a file first.");
         return;
       }
 
-      let html = "<h3>" + data.headings.overview + "</h3><p>" + data.overview + "</p>";
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('language', selectedLanguage);
 
-      html += "<h3>" + data.headings.key_points + "</h3><ul>";
-      data.key_points.forEach(point => {
-        html += "<li>" + point + "</li>";
+      loading.style.display = 'block';
+      results.style.display = 'none';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          alert(errorData.error || "Failed to process the document.");
+          return;
+        }
+
+        currentData = await response.json();
+        renderSummaryData(currentData);
+        results.style.display = 'flex';
+      } catch (err) {
+        console.error(err);
+        alert("Could not reach the server. Make sure your backend API is running.");
+      } finally {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    });
+
+    function renderSummaryData(data) {
+      document.getElementById('heading-overview').textContent = data.headings?.overview || "Overview";
+      document.getElementById('heading-keypoints').textContent = data.headings?.key_points || "Key points";
+      document.getElementById('heading-keyterms').textContent = data.headings?.key_terms || "Key terms";
+
+      document.getElementById('content-overview').textContent = data.overview;
+
+      const pointsContainer = document.getElementById('content-keypoints');
+      pointsContainer.innerHTML = '';
+      data.key_points.forEach((point, idx) => {
+        const item = document.createElement('div');
+        item.className = 'point-item';
+        item.innerHTML = `<span class="point-badge">0${idx + 1}</span> <span>${point}</span>`;
+        pointsContainer.appendChild(item);
       });
-      html += "</ul>";
 
-      html += "<h3>" + data.headings.key_terms + "</h3><ul>";
+      const termsContainer = document.getElementById('content-keyterms');
+      termsContainer.innerHTML = '';
       data.key_terms.forEach(item => {
-        html += "<li><strong>" + item.term + "</strong>: " + item.definition + "</li>";
+        const row = document.createElement('div');
+        row.className = 'term-row';
+        row.innerHTML = `<div class="term-pill">${item.term}</div><div class="term-desc">${item.definition}</div>`;
+        termsContainer.appendChild(row);
       });
-      html += "</ul>";
+    }
 
-      document.getElementById("result").innerHTML = html;
+    function playAudioSummary() {
+      if (!currentData || !('speechSynthesis' in window)) {
+        alert("Text-to-speech is not supported in this browser.");
+        return;
+      }
 
-      currentSummaryText = data.overview + ". " +
-        data.key_points.join(". ") + ". " +
-        data.key_terms.map(t => t.term + ": " + t.definition).join(". ");
+      window.speechSynthesis.cancel();
 
-      document.getElementById("speakBtn").style.display = "inline-block";
-    });
+      const textToSpeak = `${currentData.overview}. ${currentData.key_points.join('. ')}`;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
-    document.getElementById("speakBtn").addEventListener("click", () => {
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(currentSummaryText);
-      utterance.lang = "hi-IN";
-      speechSynthesis.speak(utterance);
-    });
+      utterance.lang = langVoiceMap[selectedLanguage] || 'en-US';
+      window.speechSynthesis.speak(utterance);
+    }
   </script>
 </body>
 </html>
