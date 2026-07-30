@@ -384,7 +384,7 @@
         <div class="dropzone" onclick="document.getElementById('file-input').click()">
           <div class="drop-icon">📤</div>
           <div class="drop-text" id="file-name-text">Drop a file, or click to browse</div>
-          <div class="drop-sub">PDF, DOCX, or audio — up to 20MB</div>
+          <div class="drop-sub">PDF support</div>
           <input type="file" id="file-input" style="display:none" onchange="updateFileLabel(this)" required>
         </div>
 
@@ -412,7 +412,6 @@
             <optgroup label="Global Languages">
               <option value="Arabic">العربية (Arabic)</option>
               <option value="Chinese">中文 (Chinese)</option>
-
               <option value="French">Français (French)</option>
               <option value="German">Deutsch (German)</option>
               <option value="Italian">Italiano (Italian)</option>
@@ -420,7 +419,6 @@
               <option value="Korean">한국어 (Korean)</option>
               <option value="Portuguese">Português (Portuguese)</option>
               <option value="Russian">Русский (Russian)</option>
-
             </optgroup>
           </select>
         </div>
@@ -473,7 +471,7 @@
   </div>
 
   <script>
-    const BACKEND_URL = "'https://translation-backend-yedv.onrender.com/process'"; 
+    const BACKEND_URL = "https://translation-backend-yedv.onrender.com/process"; 
 
     let selectedLanguage = "English";
     let currentData = null;
