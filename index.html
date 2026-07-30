@@ -471,7 +471,7 @@
   </div>
 
   <script>
-    const BACKEND_URL = "https://translation-backend-yedv.onrender.com/process"; 
+    const BACKEND_URL = "https://translation-backend-yedv.onrender.com/summarize"; 
 
     let selectedLanguage = "English";
     let currentData = null;
@@ -578,21 +578,25 @@
 
       const pointsContainer = document.getElementById('content-keypoints');
       pointsContainer.innerHTML = '';
-      data.key_points.forEach((point, idx) => {
-        const item = document.createElement('div');
-        item.className = 'point-item';
-        item.innerHTML = `<span class="point-badge">0${idx + 1}</span> <span>${point}</span>`;
-        pointsContainer.appendChild(item);
-      });
+      if (Array.isArray(data.key_points)) {
+        data.key_points.forEach((point, idx) => {
+          const item = document.createElement('div');
+          item.className = 'point-item';
+          item.innerHTML = `<span class="point-badge">0${idx + 1}</span> <span>${point}</span>`;
+          pointsContainer.appendChild(item);
+        });
+      }
 
       const termsContainer = document.getElementById('content-keyterms');
       termsContainer.innerHTML = '';
-      data.key_terms.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'term-row';
-        row.innerHTML = `<div class="term-pill">${item.term}</div><div class="term-desc">${item.definition}</div>`;
-        termsContainer.appendChild(row);
-      });
+      if (Array.isArray(data.key_terms)) {
+        data.key_terms.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'term-row';
+          row.innerHTML = `<div class="term-pill">${item.term}</div><div class="term-desc">${item.definition}</div>`;
+          termsContainer.appendChild(row);
+        });
+      }
     }
 
     function playAudioSummary() {
@@ -603,17 +607,18 @@
 
       window.speechSynthesis.cancel();
 
-      const textToSpeak = `${currentData.overview}. ${currentData.key_points.join('. ')}`;
+      const pointsText = Array.isArray(currentData.key_points) ? currentData.key_points.join('. ') : '';
+      const textToSpeak = `${currentData.overview}. ${pointsText}`;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
 
       utterance.lang = langVoiceMap[selectedLanguage] || 'en-US';
       window.speechSynthesis.speak(utterance);
     }
   
-  // Wake up Render as soon as the page loads
-  window.addEventListener("DOMContentLoaded", () => {
-    fetch("https://translation-backend-yedv.onrender.com/").catch(() => {});
-  });
-</script>
+    // Wake up Render as soon as the page loads
+    window.addEventListener("DOMContentLoaded", () => {
+      fetch("https://translation-backend-yedv.onrender.com/").catch(() => {});
+    });
+  </script>
 </body>
 </html>
