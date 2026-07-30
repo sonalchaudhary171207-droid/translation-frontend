@@ -609,6 +609,11 @@
       utterance.lang = langVoiceMap[selectedLanguage] || 'en-US';
       window.speechSynthesis.speak(utterance);
     }
-  </script>
+  
+  // Wake up Render as soon as the page loads
+  window.addEventListener("DOMContentLoaded", () => {
+    fetch("https://translation-backend-yedv.onrender.com/").catch(() => {});
+  });
+</script>
 </body>
 </html>
